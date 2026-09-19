@@ -3,172 +3,507 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fechamento Diário 2.0</title>
+<title>Fechamento Diário</title>
+
 <style>
 :root{
-  --bg:#07101c; --card:#101c2d; --line:#2a3b52; --text:#f2f7fb;
-  --muted:#91a5ba; --accent:#65c7e8; --good:#55d69a; --bad:#ff7d86;
+--navy:#12365a;
+--blue:#1f6fb2;
+--light:#f3f7fb;
+--border:#d9e3ed;
+--text:#19324a;
+--muted:#6c7d8d;
+--green:#16845b;
+--red:#c83d3d;
+--gold:#d6a93a;
 }
+
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,sans-serif}
-main{max-width:900px;margin:auto;padding:24px 16px 50px}
-.kicker{color:var(--accent);letter-spacing:5px;font-weight:700;font-size:14px}
-h1{font-size:38px;margin:10px 0 8px}
-.subtitle{color:var(--muted);font-size:17px;line-height:1.5;margin-bottom:22px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:18px;margin-bottom:18px}
-.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between}
-button{border:0;border-radius:13px;padding:13px 17px;font-weight:700;font-size:15px;cursor:pointer}
-.primary{background:var(--accent);color:#06101a}
-.secondary{background:#1c2b3e;color:var(--text);border:1px solid var(--line)}
-.danger{background:#38202a;color:#ffb5bc;border:1px solid #62313b}
-table{width:100%;border-collapse:separate;border-spacing:0 9px;min-width:760px}
-.table-wrap{overflow-x:auto}
-th{color:var(--muted);font-size:12px;text-align:left;padding:0 8px}
-td{background:#0b1625;padding:8px}
-td:first-child{border-radius:12px 0 0 12px}
-td:last-child{border-radius:0 12px 12px 0}
-input{width:100%;background:#081321;color:var(--text);border:1px solid #344a64;border-radius:10px;padding:12px;font-size:16px;outline:none}
-input:focus{border-color:var(--accent)}
-.num{min-width:105px}
-.pn{min-width:150px}
-.summary{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-.metric{background:#0b1625;border:1px solid var(--line);border-radius:15px;padding:14px}
-.metric span{display:block;color:var(--muted);font-size:12px;margin-bottom:6px}
-.metric strong{font-size:23px}
-.good{color:var(--good)!important}.bad{color:var(--bad)!important}
-.note{color:var(--muted);font-size:13px;line-height:1.45;margin-top:12px}
-.result{margin-top:16px}
-#copyStatus{color:var(--good);font-size:13px;margin-left:8px}
-@media(max-width:600px){
-  main{padding:20px 12px 40px} h1{font-size:31px}
-  .summary{grid-template-columns:1fr}
+
+body{
+margin:0;
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+background:var(--light);
+color:var(--text);
+}
+
+header{
+background:linear-gradient(135deg,var(--navy),var(--blue));
+color:white;
+padding:28px 18px 34px;
+border-radius:0 0 28px 28px;
+box-shadow:0 5px 18px #12365a30;
+}
+
+.header{
+max-width:1100px;
+margin:auto;
+}
+
+.eyebrow{
+font-size:12px;
+letter-spacing:2px;
+font-weight:800;
+opacity:.85;
+}
+
+h1{
+margin:6px 0 0;
+font-size:30px;
+}
+
+.subtitle{
+margin:6px 0 0;
+opacity:.9;
+}
+
+main{
+max-width:1100px;
+margin:-18px auto 40px;
+padding:0 14px;
+}
+
+.panel{
+background:white;
+border:1px solid var(--border);
+border-radius:18px;
+padding:18px;
+margin-bottom:16px;
+box-shadow:0 4px 14px #1f4a6e12;
+}
+
+.title{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:14px;
+}
+
+h2{
+font-size:18px;
+margin:0;
+}
+
+.fields{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:12px;
+}
+
+label{
+font-size:12px;
+font-weight:800;
+color:var(--muted);
+display:block;
+margin-bottom:6px;
+}
+
+input{
+width:100%;
+padding:11px;
+border:1px solid var(--border);
+border-radius:11px;
+background:#fbfdff;
+font-size:15px;
+color:var(--text);
+}
+
+.table{
+overflow-x:auto;
+}
+
+table{
+width:100%;
+border-collapse:separate;
+border-spacing:0;
+min-width:820px;
+}
+
+th{
+background:#edf4fa;
+color:var(--navy);
+font-size:11px;
+padding:11px 7px;
+}
+
+td{
+padding:7px 5px;
+border-bottom:1px solid #edf1f5;
+text-align:center;
+}
+
+td input{
+padding:9px 6px;
+}
+
+.result{
+font-weight:800;
+white-space:nowrap;
+}
+
+.green{color:var(--green)}
+.red{color:var(--red)}
+.gray{color:var(--muted)}
+
+button{
+border:0;
+border-radius:11px;
+padding:11px 15px;
+font-weight:800;
+font-size:14px;
+cursor:pointer;
+}
+
+.primary{
+background:var(--navy);
+color:white;
+}
+
+.secondary{
+background:#e9f2f9;
+color:var(--navy);
+}
+
+.danger{
+background:#fff0f0;
+color:var(--red);
+}
+
+.actions{
+display:flex;
+gap:9px;
+flex-wrap:wrap;
+margin-top:15px;
+}
+
+.summary{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:10px;
+}
+
+.card{
+background:#f8fbfe;
+border:1px solid var(--border);
+border-radius:14px;
+padding:14px;
+}
+
+.card small{
+display:block;
+color:var(--muted);
+font-weight:700;
+font-size:11px;
+margin-bottom:5px;
+}
+
+.card strong{
+font-size:21px;
+color:var(--navy);
+}
+
+.adherence{
+border-left:4px solid var(--gold);
+}
+
+.note{
+font-size:12px;
+color:var(--muted);
+line-height:1.5;
+}
+
+.footer{
+text-align:center;
+color:var(--muted);
+font-size:11px;
+}
+
+@media(max-width:700px){
+.fields{grid-template-columns:1fr 1fr}
+.summary{grid-template-columns:1fr 1fr}
+}
+
+@media(max-width:450px){
+.fields,.summary{grid-template-columns:1fr}
+h1{font-size:26px}
 }
 </style>
 </head>
+
 <body>
+
+<header>
+<div class="header">
+<div class="eyebrow">CONTROLE OPERACIONAL</div>
+<h1>Fechamento Diário</h1>
+<div class="subtitle">Acompanhamento de produção e aderência</div>
+</div>
+</header>
+
 <main>
-  <div class="kicker">CONTROLE OPERACIONAL</div>
-  <h1>Fechamento diário 2.0</h1>
-  <div class="subtitle">Cadastre cada PN e informe impostado, produzido, reportado e hora por peça. O sistema calcula delta, horas e aderência automaticamente.</div>
 
-  <section class="card">
-    <div class="toolbar">
-      <strong>Produção do dia</strong>
-      <div>
-        <button class="primary" onclick="addRow()">+ Adicionar PN</button>
-        <button class="secondary" onclick="calculate()">Calcular</button>
-      </div>
-    </div>
+<section class="panel">
+<div class="title">
+<h2>Informações do fechamento</h2>
+</div>
 
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>PN</th><th>H/PC</th><th>IMPOSTADO</th><th>PRODUZIDO</th><th>REPORTADO</th><th>DELTA</th><th>ADERÊNCIA</th><th></th>
-          </tr>
-        </thead>
-        <tbody id="rows"></tbody>
-      </table>
-    </div>
+<div class="fields">
 
-    <div class="note">
-      Delta = Reportado − Impostado. Hora impostada = Impostado × H/PC.
-      Hora reportada = Reportado × H/PC. Aderência do PN = Hora reportada ÷ Hora impostada.
-    </div>
-  </section>
+<div>
+<label>DATA</label>
+<input id="data" type="date">
+</div>
 
-  <section class="card result">
-    <strong>Resumo do fechamento</strong>
-    <div class="summary" style="margin-top:12px">
-      <div class="metric"><span>Impostado total</span><strong id="tImp">0</strong></div>
-      <div class="metric"><span>Produzido total</span><strong id="tProd">0</strong></div>
-      <div class="metric"><span>Reportado total</span><strong id="tRep">0</strong></div>
-      <div class="metric"><span>Delta total</span><strong id="tDelta">0</strong></div>
-      <div class="metric"><span>Horas impostadas</span><strong id="tHI">0,00 h</strong></div>
-      <div class="metric"><span>Horas reportadas</span><strong id="tHR">0,00 h</strong></div>
-      <div class="metric"><span>Aderência por horas</span><strong id="tAd">0,0%</strong></div>
-    </div>
-    <div class="note">
-      A aderência total exibida aqui é calculada pelas horas (horas reportadas ÷ horas impostadas).
-      Se o seu fechamento oficial usar outra regra para o total, vamos ajustar depois com um exemplo real.
-    </div>
-    <div style="margin-top:16px">
-      <button class="primary" onclick="copySummary()">Copiar resumo</button>
-      <span id="copyStatus"></span>
-    </div>
-  </section>
+<div>
+<label>TURNO</label>
+<input id="turno" placeholder="Ex.: 2º Turno">
+</div>
+
+<div>
+<label>RESPONSÁVEL</label>
+<input id="responsavel" placeholder="Nome">
+</div>
+
+</div>
+</section>
+
+<section class="panel">
+
+<div class="title">
+<h2>Produção por PN</h2>
+<button class="secondary" onclick="addRow()">＋ Adicionar PN</button>
+</div>
+
+<div class="table">
+<table>
+<thead>
+<tr>
+<th>PN</th>
+<th>H/PC</th>
+<th>IMPOSTADO</th>
+<th>PRODUZIDO</th>
+<th>REPORTADO</th>
+<th>DELTA</th>
+<th>ADERÊNCIA</th>
+<th></th>
+</tr>
+</thead>
+
+<tbody id="rows"></tbody>
+</table>
+</div>
+
+<div class="actions">
+<button class="primary" onclick="calculate()">Calcular fechamento</button>
+<button class="secondary" onclick="copySummary()">Copiar resumo</button>
+<button class="danger" onclick="clearAll()">Limpar</button>
+</div>
+
+</section>
+
+<section class="panel">
+
+<div class="title">
+<h2>Resumo</h2>
+</div>
+
+<div class="summary">
+
+<div class="card">
+<small>IMPOSTADO TOTAL</small>
+<strong id="totImp">0</strong>
+</div>
+
+<div class="card">
+<small>PRODUZIDO TOTAL</small>
+<strong id="totProd">0</strong>
+</div>
+
+<div class="card">
+<small>REPORTADO TOTAL</small>
+<strong id="totRep">0</strong>
+</div>
+
+<div class="card">
+<small>DELTA TOTAL</small>
+<strong id="totDelta">0</strong>
+</div>
+
+<div class="card">
+<small>HORAS IMPOSTADAS</small>
+<strong id="totHI">0,00</strong>
+</div>
+
+<div class="card">
+<small>HORAS REPORTADAS</small>
+<strong id="totHR">0,00</strong>
+</div>
+
+<div class="card adherence">
+<small>ADERÊNCIA POR HORAS</small>
+<strong id="totAder">0%</strong>
+</div>
+
+</div>
+
+<p class="note">
+Aderência = hora reportada ÷ hora impostada × 100.
+</p>
+
+</section>
+
+<div class="footer">
+Fechamento Diário • Controle Operacional
+</div>
+
 </main>
 
 <script>
-const rows = document.getElementById('rows');
 
-function addRow(data={}){
-  const tr=document.createElement('tr');
-  tr.innerHTML=`
-    <td><input class="pn" placeholder="Ex.: 780 MHEV" value="${data.pn||''}"></td>
-    <td><input class="num hpc" type="number" step="0.001" placeholder="0,68" value="${data.hpc??''}"></td>
-    <td><input class="num imp" type="number" step="1" placeholder="110" value="${data.imp??''}"></td>
-    <td><input class="num prod" type="number" step="1" placeholder="70" value="${data.prod??''}"></td>
-    <td><input class="num rep" type="number" step="1" placeholder="51" value="${data.rep??''}"></td>
-    <td class="delta">—</td>
-    <td class="adh">—</td>
-    <td><button class="danger" onclick="this.closest('tr').remove();calculate()">×</button></td>`;
-  rows.appendChild(tr);
+const rows=document.getElementById("rows");
+
+function addRow(pn="",hpc="",imp="",prod="",rep=""){
+
+let tr=document.createElement("tr");
+
+tr.innerHTML=`
+
+<td>
+<input class="pn" value="${pn}" placeholder="PN">
+</td>
+
+<td>
+<input class="hpc" type="number" step="0.001" value="${hpc}" placeholder="0,000">
+</td>
+
+<td>
+<input class="imp" type="number" value="${imp}" placeholder="0">
+</td>
+
+<td>
+<input class="prod" type="number" value="${prod}" placeholder="0">
+</td>
+
+<td>
+<input class="rep" type="number" value="${rep}" placeholder="0">
+</td>
+
+<td class="result delta gray">—</td>
+
+<td class="result ader gray">—</td>
+
+<td>
+<button class="danger" onclick="this.closest('tr').remove();calculate()">×</button>
+</td>
+
+`;
+
+rows.appendChild(tr);
 }
 
-function n(v){ return Number(v)||0 }
-function fmt(v,d=0){ return v.toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d}) }
+function fmt(n,d=2){
+
+return Number(n||0).toLocaleString("pt-BR",{
+minimumFractionDigits:d,
+maximumFractionDigits:d
+});
+
+}
 
 function calculate(){
-  let imp=0, prod=0, rep=0, delta=0, hI=0, hR=0;
-  [...rows.children].forEach(tr=>{
-    const h=n(tr.querySelector('.hpc').value);
-    const i=n(tr.querySelector('.imp').value);
-    const p=n(tr.querySelector('.prod').value);
-    const r=n(tr.querySelector('.rep').value);
-    const d=r-i;
-    const hi=i*h, hr=r*h;
-    const a=i>0 ? (hr/hi)*100 : 0;
-    tr.querySelector('.delta').textContent=fmt(d);
-    tr.querySelector('.delta').className='delta '+(d<0?'bad':d>0?'good':'');
-    tr.querySelector('.adh').textContent=i>0 ? fmt(a,1)+'%' : '—';
-    tr.querySelector('.adh').className='adh '+(a<100?'bad':a>100?'good':'');
-    imp+=i; prod+=p; rep+=r; delta+=d; hI+=hi; hR+=hr;
-  });
-  const totalA=hI>0?(hR/hI)*100:0;
-  document.getElementById('tImp').textContent=fmt(imp);
-  document.getElementById('tProd').textContent=fmt(prod);
-  document.getElementById('tRep').textContent=fmt(rep);
-  document.getElementById('tDelta').textContent=fmt(delta);
-  document.getElementById('tDelta').className=delta<0?'bad':delta>0?'good':'';
-  document.getElementById('tHI').textContent=fmt(hI,2)+' h';
-  document.getElementById('tHR').textContent=fmt(hR,2)+' h';
-  document.getElementById('tAd').textContent=fmt(totalA,1)+'%';
-  document.getElementById('tAd').className=totalA<100?'bad':totalA>100?'good':'';
+
+let ti=0,tp=0,tr=0,hi=0,hr=0;
+
+[...rows.children].forEach(row=>{
+
+let h=+row.querySelector(".hpc").value||0;
+let imp=+row.querySelector(".imp").value||0;
+let prod=+row.querySelector(".prod").value||0;
+let rep=+row.querySelector(".rep").value||0;
+
+let delta=rep-imp;
+let horaImp=imp*h;
+let horaRep=rep*h;
+let ader=horaImp?(horaRep/horaImp)*100:0;
+
+ti+=imp;
+tp+=prod;
+tr+=rep;
+hi+=horaImp;
+hr+=horaRep;
+
+let d=row.querySelector(".delta");
+let a=row.querySelector(".ader");
+
+d.textContent=(delta>0?"+":"")+fmt(delta,0);
+d.className="result delta "+(delta>0?"green":delta<0?"red":"gray");
+
+a.textContent=fmt(ader,1)+"%";
+a.className="result ader "+(ader>=100?"green":ader<100?"red":"gray");
+
+});
+
+let totalDelta=tr-ti;
+let totalAder=hi?(hr/hi)*100:0;
+
+document.getElementById("totImp").textContent=fmt(ti,0);
+document.getElementById("totProd").textContent=fmt(tp,0);
+document.getElementById("totRep").textContent=fmt(tr,0);
+document.getElementById("totDelta").textContent=(totalDelta>0?"+":"")+fmt(totalDelta,0);
+document.getElementById("totHI").textContent=fmt(hi);
+document.getElementById("totHR").textContent=fmt(hr);
+document.getElementById("totAder").textContent=fmt(totalAder,1)+"%";
+
 }
 
 function copySummary(){
-  const text=`FECHAMENTO DIÁRIO
-Impostado: ${document.getElementById('tImp').textContent}
-Produzido: ${document.getElementById('tProd').textContent}
-Reportado: ${document.getElementById('tRep').textContent}
-Delta: ${document.getElementById('tDelta').textContent}
-Hora impostada: ${document.getElementById('tHI').textContent}
-Hora reportada: ${document.getElementById('tHR').textContent}
-Aderência por horas: ${document.getElementById('tAd').textContent}`;
-  navigator.clipboard?.writeText(text).then(()=>{
-    document.getElementById('copyStatus').textContent='Resumo copiado!';
-  }).catch(()=>{
-    document.getElementById('copyStatus').textContent='Selecione e copie o resumo manualmente.';
-  });
+
+calculate();
+
+let texto=
+`FECHAMENTO DIÁRIO
+
+Data: ${document.getElementById("data").value||"—"}
+Turno: ${document.getElementById("turno").value||"—"}
+Responsável: ${document.getElementById("responsavel").value||"—"}
+
+Impostado: ${document.getElementById("totImp").textContent}
+Produzido: ${document.getElementById("totProd").textContent}
+Reportado: ${document.getElementById("totRep").textContent}
+Delta: ${document.getElementById("totDelta").textContent}
+Horas impostadas: ${document.getElementById("totHI").textContent}
+Horas reportadas: ${document.getElementById("totHR").textContent}
+Aderência: ${document.getElementById("totAder").textContent}`;
+
+navigator.clipboard?.writeText(texto);
+
+alert("Resumo copiado!");
+
 }
 
-[
- {pn:'780 MHEV',hpc:0.68,imp:110,prod:70,rep:51},
- {pn:'600',hpc:0.16,imp:100,prod:90,rep:90},
- {pn:'400',hpc:0.13,imp:200,prod:200,rep:200}
-].forEach(addRow);
+function clearAll(){
+
+if(confirm("Limpar todos os dados?")){
+
+rows.innerHTML="";
+
+addRow("780 MHEV","0.68","110","70","51");
+addRow("600","0.16","100","90","90");
+addRow("400","0.13","200","200","200");
+
 calculate();
+
+}
+
+}
+
+addRow("780 MHEV","0.68","110","70","51");
+addRow("600","0.16","100","90","90");
+addRow("400","0.13","200","200","200");
+
+calculate();
+
 </script>
+
 </body>
 </html>
