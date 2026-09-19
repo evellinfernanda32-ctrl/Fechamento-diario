@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fechamento Diário 2.0</title>
+<style>
+:root{
+  --bg:#07101c; --card:#101c2d; --line:#2a3b52; --text:#f2f7fb;
+  --muted:#91a5ba; --accent:#65c7e8; --good:#55d69a; --bad:#ff7d86;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,sans-serif}
+main{max-width:900px;margin:auto;padding:24px 16px 50px}
+.kicker{color:var(--accent);letter-spacing:5px;font-weight:700;font-size:14px}
+h1{font-size:38px;margin:10px 0 8px}
+.subtitle{color:var(--muted);font-size:17px;line-height:1.5;margin-bottom:22px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:18px;margin-bottom:18px}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+button{border:0;border-radius:13px;padding:13px 17px;font-weight:700;font-size:15px;cursor:pointer}
+.primary{background:var(--accent);color:#06101a}
+.secondary{background:#1c2b3e;color:var(--text);border:1px solid var(--line)}
+.danger{background:#38202a;color:#ffb5bc;border:1px solid #62313b}
+table{width:100%;border-collapse:separate;border-spacing:0 9px;min-width:760px}
+.table-wrap{overflow-x:auto}
+th{color:var(--muted);font-size:12px;text-align:left;padding:0 8px}
+td{background:#0b1625;padding:8px}
+td:first-child{border-radius:12px 0 0 12px}
+td:last-child{border-radius:0 12px 12px 0}
+input{width:100%;background:#081321;color:var(--text);border:1px solid #344a64;border-radius:10px;padding:12px;font-size:16px;outline:none}
+input:focus{border-color:var(--accent)}
+.num{min-width:105px}
+.pn{min-width:150px}
+.summary{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.metric{background:#0b1625;border:1px solid var(--line);border-radius:15px;padding:14px}
+.metric span{display:block;color:var(--muted);font-size:12px;margin-bottom:6px}
+.metric strong{font-size:23px}
+.good{color:var(--good)!important}.bad{color:var(--bad)!important}
+.note{color:var(--muted);font-size:13px;line-height:1.45;margin-top:12px}
+.result{margin-top:16px}
+#copyStatus{color:var(--good);font-size:13px;margin-left:8px}
+@media(max-width:600px){
+  main{padding:20px 12px 40px} h1{font-size:31px}
+  .summary{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<main>
+  <div class="kicker">CONTROLE OPERACIONAL</div>
+  <h1>Fechamento diário 2.0</h1>
+  <div class="subtitle">Cadastre cada PN e informe impostado, produzido, reportado e hora por peça. O sistema calcula delta, horas e aderência automaticamente.</div>
+
+  <section class="card">
+    <div class="toolbar">
+      <strong>Produção do dia</strong>
+      <div>
+        <button class="primary" onclick="addRow()">+ Adicionar PN</button>
+        <button class="secondary" onclick="calculate()">Calcular</button>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>PN</th><th>H/PC</th><th>IMPOSTADO</th><th>PRODUZIDO</th><th>REPORTADO</th><th>DELTA</th><th>ADERÊNCIA</th><th></th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+
+    <div class="note">
+      Delta = Reportado − Impostado. Hora impostada = Impostado × H/PC.
+      Hora reportada = Reportado × H/PC. Aderência do PN = Hora reportada ÷ Hora impostada.
+    </div>
+  </section>
+
+  <section class="card result">
+    <strong>Resumo do fechamento</strong>
+    <div class="summary" style="margin-top:12px">
+      <div class="metric"><span>Impostado total</span><strong id="tImp">0</strong></div>
+      <div class="metric"><span>Produzido total</span><strong id="tProd">0</strong></div>
+      <div class="metric"><span>Reportado total</span><strong id="tRep">0</strong></div>
+      <div class="metric"><span>Delta total</span><strong id="tDelta">0</strong></div>
+      <div class="metric"><span>Horas impostadas</span><strong id="tHI">0,00 h</strong></div>
+      <div class="metric"><span>Horas reportadas</span><strong id="tHR">0,00 h</strong></div>
+      <div class="metric"><span>Aderência por horas</span><strong id="tAd">0,0%</strong></div>
+    </div>
+    <div class="note">
+      A aderência total exibida aqui é calculada pelas horas (horas reportadas ÷ horas impostadas).
+      Se o seu fechamento oficial usar outra regra para o total, vamos ajustar depois com um exemplo real.
+    </div>
+    <div style="margin-top:16px">
+      <button class="primary" onclick="copySummary()">Copiar resumo</button>
+      <span id="copyStatus"></span>
+    </div>
+  </section>
+</main>
+
+<script>
+const rows = document.getElementById('rows');
+
+function addRow(data={}){
+  const tr=document.createElement('tr');
+  tr.innerHTML=`
+    <td><input class="pn" placeholder="Ex.: 780 MHEV" value="${data.pn||''}"></td>
+    <td><input class="num hpc" type="number" step="0.001" placeholder="0,68" value="${data.hpc??''}"></td>
+    <td><input class="num imp" type="number" step="1" placeholder="110" value="${data.imp??''}"></td>
+    <td><input class="num prod" type="number" step="1" placeholder="70" value="${data.prod??''}"></td>
+    <td><input class="num rep" type="number" step="1" placeholder="51" value="${data.rep??''}"></td>
+    <td class="delta">—</td>
+    <td class="adh">—</td>
+    <td><button class="danger" onclick="this.closest('tr').remove();calculate()">×</button></td>`;
+  rows.appendChild(tr);
+}
+
+function n(v){ return Number(v)||0 }
+function fmt(v,d=0){ return v.toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d}) }
+
+function calculate(){
+  let imp=0, prod=0, rep=0, delta=0, hI=0, hR=0;
+  [...rows.children].forEach(tr=>{
+    const h=n(tr.querySelector('.hpc').value);
+    const i=n(tr.querySelector('.imp').value);
+    const p=n(tr.querySelector('.prod').value);
+    const r=n(tr.querySelector('.rep').value);
+    const d=r-i;
+    const hi=i*h, hr=r*h;
+    const a=i>0 ? (hr/hi)*100 : 0;
+    tr.querySelector('.delta').textContent=fmt(d);
+    tr.querySelector('.delta').className='delta '+(d<0?'bad':d>0?'good':'');
+    tr.querySelector('.adh').textContent=i>0 ? fmt(a,1)+'%' : '—';
+    tr.querySelector('.adh').className='adh '+(a<100?'bad':a>100?'good':'');
+    imp+=i; prod+=p; rep+=r; delta+=d; hI+=hi; hR+=hr;
+  });
+  const totalA=hI>0?(hR/hI)*100:0;
+  document.getElementById('tImp').textContent=fmt(imp);
+  document.getElementById('tProd').textContent=fmt(prod);
+  document.getElementById('tRep').textContent=fmt(rep);
+  document.getElementById('tDelta').textContent=fmt(delta);
+  document.getElementById('tDelta').className=delta<0?'bad':delta>0?'good':'';
+  document.getElementById('tHI').textContent=fmt(hI,2)+' h';
+  document.getElementById('tHR').textContent=fmt(hR,2)+' h';
+  document.getElementById('tAd').textContent=fmt(totalA,1)+'%';
+  document.getElementById('tAd').className=totalA<100?'bad':totalA>100?'good':'';
+}
+
+function copySummary(){
+  const text=`FECHAMENTO DIÁRIO
+Impostado: ${document.getElementById('tImp').textContent}
+Produzido: ${document.getElementById('tProd').textContent}
+Reportado: ${document.getElementById('tRep').textContent}
+Delta: ${document.getElementById('tDelta').textContent}
+Hora impostada: ${document.getElementById('tHI').textContent}
+Hora reportada: ${document.getElementById('tHR').textContent}
+Aderência por horas: ${document.getElementById('tAd').textContent}`;
+  navigator.clipboard?.writeText(text).then(()=>{
+    document.getElementById('copyStatus').textContent='Resumo copiado!';
+  }).catch(()=>{
+    document.getElementById('copyStatus').textContent='Selecione e copie o resumo manualmente.';
+  });
+}
+
+[
+ {pn:'780 MHEV',hpc:0.68,imp:110,prod:70,rep:51},
+ {pn:'600',hpc:0.16,imp:100,prod:90,rep:90},
+ {pn:'400',hpc:0.13,imp:200,prod:200,rep:200}
+].forEach(addRow);
+calculate();
+</script>
+</body>
+</html>
